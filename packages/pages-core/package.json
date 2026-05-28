@@ -6,6 +6,7 @@
   "exports": {
     ".": "./src/index.ts"
   },
+  
   "dependencies": {
     "@flowtap/ui-core": "workspace:*",
     "@flowtap/store": "workspace:*",
