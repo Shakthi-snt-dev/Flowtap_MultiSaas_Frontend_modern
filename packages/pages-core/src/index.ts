@@ -25,6 +25,7 @@ export * from './inventory/WriteOffsPage'
 export * from './inventory/SerialsPage'
 export * from './inventory/ReorderPage'
 export * from './inventory/InventorySettingsPage'
+export * from './food/FoodStockAlertPage'
 
 // Purchasing
 export * from './purchases/PurchasesPage'

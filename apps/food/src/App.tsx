@@ -6,7 +6,7 @@ import { ProtectedRoute, GuestRoute, OnboardingRoute, PageLoader } from '@flowta
 import { AppLayout } from '@flowtap/pages-core'
 import { authApi, tenantApi, storeSettingsApi } from '@flowtap/api-core'
 import { useSignalR } from '@flowtap/shared'
-import { UtensilsCrossed, ClipboardList, BookOpen } from 'lucide-react'
+import { UtensilsCrossed, ClipboardList, BookOpen, AlertTriangle } from 'lucide-react'
 
 // Shared pages
 const LoginPage            = React.lazy(() => import('@flowtap/pages-core').then((m) => ({ default: m.LoginPage })))
@@ -43,14 +43,16 @@ const NotificationsPage     = React.lazy(() => import('@flowtap/pages-core').the
 const SuperAdminPage        = React.lazy(() => import('@flowtap/pages-core').then((m) => ({ default: m.SuperAdminPage })))
 
 // Industry-specific pages
-const TablesPage  = React.lazy(() => import('./pages/TablesPage').then((m) => ({ default: m.TablesPage })))
-const KOTPage     = React.lazy(() => import('./pages/KOTPage').then((m) => ({ default: m.KOTPage })))
-const RecipesPage = React.lazy(() => import('./pages/RecipesPage').then((m) => ({ default: m.RecipesPage })))
+const TablesPage           = React.lazy(() => import('./pages/TablesPage').then((m) => ({ default: m.TablesPage })))
+const KOTPage              = React.lazy(() => import('./pages/KOTPage').then((m) => ({ default: m.KOTPage })))
+const RecipesPage          = React.lazy(() => import('./pages/RecipesPage').then((m) => ({ default: m.RecipesPage })))
+const FoodStockAlertPage   = React.lazy(() => import('@flowtap/pages-core').then((m) => ({ default: m.FoodStockAlertPage })))
 
 const foodNav = [
-  { label: 'Tables',  href: '/tables',  icon: <UtensilsCrossed className="w-5 h-5" /> },
-  { label: 'KOT',     href: '/kot',     icon: <ClipboardList   className="w-5 h-5" /> },
-  { label: 'Recipes', href: '/recipes', icon: <BookOpen        className="w-5 h-5" /> },
+  { label: 'Tables',        href: '/tables',              icon: <UtensilsCrossed className="w-5 h-5" /> },
+  { label: 'KOT',           href: '/kot',                 icon: <ClipboardList   className="w-5 h-5" /> },
+  { label: 'Recipes',       href: '/recipes',             icon: <BookOpen        className="w-5 h-5" /> },
+  { label: 'Stock Alerts',  href: '/food/stock-alerts',   icon: <AlertTriangle   className="w-5 h-5" /> },
 ]
 
 const App: React.FC = () => {
@@ -175,9 +177,10 @@ const App: React.FC = () => {
             <Route path="store-admin"              element={<StoreAdminPage />} />
             <Route path="notifications"            element={<NotificationsPage />} />
             {/* Food-specific */}
-            <Route path="tables"  element={<TablesPage />} />
-            <Route path="kot"     element={<KOTPage />} />
-            <Route path="recipes" element={<RecipesPage />} />
+            <Route path="tables"              element={<TablesPage />} />
+            <Route path="kot"                 element={<KOTPage />} />
+            <Route path="recipes"             element={<RecipesPage />} />
+            <Route path="food/stock-alerts"   element={<FoodStockAlertPage />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Route>
         </Route>
