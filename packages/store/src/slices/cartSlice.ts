@@ -14,6 +14,10 @@ export interface CartItem {
   taxRate: number
   isTaxIncluded?: boolean
   total: number
+  // Food industry — null/undefined for Repair/Retail
+  variantId?:   string
+  variantName?: string
+  notes?:       string  // special instructions ("no onion", "extra cheese")
   ticketConfig?: {
     brandId: string; brandName: string; modelId: string; modelName: string
     problem: string; password?: string; appearance?: string; technicianId?: string
@@ -34,6 +38,10 @@ interface CartState {
   ticketId?: string
   ticketNumber?: string
   ticketAdvancePaid?: number
+  // Food industry context — undefined for Repair/Retail
+  tableId?:       string
+  tableName?:     string
+  foodOrderType?: 'DineIn' | 'Takeaway' | 'Delivery'
 }
 
 const computeTotal = (price: number, quantity: number, discount: number): number =>
@@ -75,13 +83,23 @@ const cartSlice = createSlice({
       state.ticketNumber = action.payload.ticketNumber
       state.ticketAdvancePaid = action.payload.advancePaid
     },
+    setFoodOrder(state, action: PayloadAction<{ tableId?: string; tableName?: string; foodOrderType: 'DineIn' | 'Takeaway' | 'Delivery' }>) {
+      state.tableId       = action.payload.tableId
+      state.tableName     = action.payload.tableName
+      state.foodOrderType = action.payload.foodOrderType
+    },
+    updateItemNotes(state, action: PayloadAction<{ id: string; notes: string }>) {
+      const item = state.items.find((i) => i.id === action.payload.id)
+      if (item) item.notes = action.payload.notes
+    },
     clearCart(state) {
       state.items = []; state.discountPercent = 0; state.payments = []
       state.clientId = undefined; state.clientName = undefined
       state.ticketId = undefined; state.ticketNumber = undefined; state.ticketAdvancePaid = undefined
+      state.tableId  = undefined; state.tableName   = undefined; state.foodOrderType = undefined
     },
   },
 })
 
-export const { addItem, removeItem, updateQuantity, updateItemDiscount, setDiscount, addPayment, removePayment, setClient, clearClient, setTicketContext, clearCart } = cartSlice.actions
+export const { addItem, removeItem, updateQuantity, updateItemDiscount, setDiscount, addPayment, removePayment, setClient, clearClient, setTicketContext, setFoodOrder, updateItemNotes, clearCart } = cartSlice.actions
 export default cartSlice.reducer

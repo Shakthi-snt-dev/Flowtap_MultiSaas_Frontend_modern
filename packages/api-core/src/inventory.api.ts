@@ -9,6 +9,7 @@ interface GetProductsParams {
   pageSize?: number
   page?: number
   locationId?: string
+  kind?: string   // optional ProductKind filter — 'FinalProduct' for food POS; omit for all industries
 }
 
 interface GetCategoriesParams {
@@ -199,6 +200,9 @@ export const inventoryApi = {
   },
   approveWriteOff(id: string, data: { approved: boolean; approvedByEmployeeId: string; notes?: string }) {
     return api.post(`/inventory/write-offs/${id}/approve`, data)
+  },
+  getReorderRules(params: { companyId?: string }) {
+    return api.get('/inventory/reorder-rules', { params })
   },
   createReorderRule(data: Record<string, unknown>) {
     return api.post('/inventory/reorder-rules', data)

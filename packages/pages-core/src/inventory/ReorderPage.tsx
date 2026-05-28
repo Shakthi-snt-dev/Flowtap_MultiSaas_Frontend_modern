@@ -90,20 +90,23 @@ export const ReorderPage: React.FC = () => {
   const loadRules = useCallback(() => {
     if (!tenant?.id) return
     setLoadingRules(true)
-    // ReorderRules are loaded via inventory stock or we repurpose the alerts query
-    // For now use GET /inventory/reorder-rules (via GetReorderAlerts pattern)
     inventoryApi
-      .getReorderAlerts({ companyId: tenant.id })
-      .then(() => {
-        // rules come from same endpoint in some implementations; adjust as needed
+      .getReorderRules({ companyId: tenant.id })
+      .then((res) => {
+        const data = res.data?.data ?? res.data ?? []
+        setRules(Array.isArray(data) ? data : [])
       })
-      .catch(() => {})
+      .catch(() => toast.error('Failed to load rules'))
       .finally(() => setLoadingRules(false))
   }, [tenant?.id])
 
   useEffect(() => {
     loadAlerts()
   }, [loadAlerts])
+
+  useEffect(() => {
+    if (activeTab === 'rules') loadRules()
+  }, [activeTab, loadRules])
 
   useEffect(() => {
     if (!tenant?.id) return

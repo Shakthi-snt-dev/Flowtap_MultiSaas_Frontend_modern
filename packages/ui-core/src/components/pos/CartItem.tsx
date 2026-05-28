@@ -16,9 +16,12 @@ interface CartItemProps {
   item: CartItemType
   /** When true (ticket-checkout mode) — hides edit controls, locks quantity */
   readOnly?: boolean
+  /** When true (food industry) — shows per-item special instructions input */
+  showNotes?: boolean
+  onNotesChange?: (id: string, notes: string) => void
 }
 
-export const CartItemRow: React.FC<CartItemProps> = ({ item, readOnly }) => {
+export const CartItemRow: React.FC<CartItemProps> = ({ item, readOnly, showNotes, onNotesChange }) => {
   const dispatch = useAppDispatch()
   const { format } = useCurrency()
 
@@ -37,6 +40,20 @@ export const CartItemRow: React.FC<CartItemProps> = ({ item, readOnly }) => {
           )}
         </div>
         {item.sku && <div className="text-[11px] text-gray-400 mt-0.5">{item.sku}</div>}
+
+        {/* Special instructions — food industry only, hidden in readOnly */}
+        {showNotes && !readOnly && (
+          <input
+            type="text"
+            placeholder="Special instructions..."
+            value={item.notes ?? ''}
+            onChange={(e) => onNotesChange?.(item.id, e.target.value)}
+            className="w-full text-xs px-2 py-0.5 rounded border border-dashed border-amber-300 bg-amber-50 dark:bg-amber-900/10 dark:border-amber-700 text-gray-700 dark:text-gray-300 placeholder-gray-400 mt-1 focus:outline-none focus:border-amber-400"
+          />
+        )}
+        {showNotes && readOnly && item.notes && (
+          <div className="text-[11px] text-amber-600 dark:text-amber-400 mt-0.5 italic">📝 {item.notes}</div>
+        )}
 
         {/* Per-item discount — hidden in readOnly */}
         {!readOnly && (

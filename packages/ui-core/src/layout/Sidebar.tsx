@@ -7,7 +7,7 @@ import {
   LayoutDashboard, LayoutGrid, ShoppingCart, Package, Warehouse, BarChart3,
   Ticket, ShoppingBag, Users, Settings, Store,
   Layers, ClipboardList, Wrench, ChevronDown, ChevronRight, UserCog,
-  ShieldCheck, ArrowLeftRight, Trash2, Cpu, Bell, Smartphone, SlidersHorizontal,
+  ShieldCheck, ArrowLeftRight, Trash2, Cpu, Bell, Smartphone,
   Receipt, Plug, CheckSquare, History, Megaphone, Tag, MessageSquare,
   ClipboardCheck, Kanban, BadgeCheck,
 } from 'lucide-react'
@@ -48,7 +48,6 @@ const CORE_NAV: NavItem[] = [
       { label: 'Serials',       href: '/inventory/serials',    icon: <Cpu               className="w-4 h-4" /> },
       { label: 'Reorder',       href: '/inventory/reorder',    icon: <Bell              className="w-4 h-4" /> },
       { label: 'Devices',       href: '/inventory/devices',    icon: <Smartphone        className="w-4 h-4" />, module: 'Devices', industryGated: 'Devices' },
-      { label: 'Inv. Settings', href: '/inventory/settings',   icon: <SlidersHorizontal className="w-4 h-4" /> },
     ],
   },
   {
@@ -69,7 +68,7 @@ const CORE_NAV: NavItem[] = [
   { label: 'Clients',       href: '/clients',        icon: <Users     className="w-5 h-5" />, module: 'Clients'   },
   { label: 'Employees',     href: '/employees',      icon: <UserCog   className="w-5 h-5" />, module: 'Employees' },
   { label: 'Reports',       href: '/reports',        icon: <BarChart3 className="w-5 h-5" />, module: 'Reports'   },
-  { label: 'Check-in',     href: '/checkin',        icon: <ClipboardCheck className="w-5 h-5" />, industryGated: 'ServiceTickets' },
+  { label: 'Check-in',     href: '/check-ins',      icon: <ClipboardCheck className="w-5 h-5" />, industryGated: 'ServiceTickets' },
   { label: 'Repair Board', href: '/repair-board',   icon: <Kanban         className="w-5 h-5" />, industryGated: 'ServiceTickets' },
   { label: 'Warranty',     href: '/warranty',       icon: <BadgeCheck     className="w-5 h-5" />, industryGated: 'ServiceTickets' },
   { label: 'Inbox',         href: '/communications', icon: <MessageSquare className="w-5 h-5" /> },

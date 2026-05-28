@@ -10,6 +10,8 @@ interface CreateSaleItem {
   discountAmount: number
   taxPercent: number
   serialNumber?: string
+  variantId?: string   // food: which variant was ordered
+  notes?: string       // food: special instructions ("no onion")
 }
 
 interface CreateSalePayment {
@@ -23,12 +25,16 @@ interface CreateSaleParams {
   companyId: string
   locationId?: string | null
   clientId?: string | null
+  employeeId?: string | null
   source: string
   ticketId?: string
   idempotencyKey: string
   notes?: string
   payments: CreateSalePayment[]
   items: CreateSaleItem[]
+  // Food industry — undefined for Repair/Retail
+  tableId?: string
+  foodOrderType?: string
 }
 
 interface GetSalesParams {

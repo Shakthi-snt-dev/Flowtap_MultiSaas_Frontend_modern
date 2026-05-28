@@ -5,9 +5,10 @@ import { CartItemRow } from '@flowtap/ui-core'
 import { CartSummary } from '@flowtap/ui-core'
 import { PaymentPanel } from '@flowtap/ui-core'
 import { ReceiptModal } from '@flowtap/ui-core'
+import { FoodOrderBar } from '@flowtap/ui-core'
 import { useAppDispatch, useAppSelector } from '@flowtap/store'
 import { useCurrency } from '@flowtap/shared'
-import { addItem, clearCart, setClient, clearClient } from '@flowtap/store'
+import { addItem, clearCart, setClient, clearClient, updateItemNotes } from '@flowtap/store'
 import { inventoryApi } from '@flowtap/api-core'
 import { ticketsApi } from '@flowtap/api-core'
 import { salesApi } from '@flowtap/api-core'
@@ -53,6 +54,7 @@ export const POSPage: React.FC = () => {
   const cart = useAppSelector((s) => s.cart)
   const tenant   = useAppSelector((s) => s.tenant.tenant)
   const isRepair = tenant?.industryType === 'RepairShop'
+  const isFood   = tenant?.industryType === 'Food'
   const currentStoreId = useAppSelector((s) => s.tenant.currentStoreId)
   const authUser = useAppSelector((s) => s.auth.user)              // employee when switched, owner otherwise
   const { format } = useCurrency()
@@ -61,6 +63,10 @@ export const POSPage: React.FC = () => {
   const ticketId       = cart.ticketId
   const ticketNumber   = cart.ticketNumber
   const advancePaid    = cart.ticketAdvancePaid ?? 0
+
+  // Food industry context — undefined for Repair/Retail
+  const foodTableId    = cart.tableId
+  const foodOrderType  = cart.foodOrderType
 
   const [products, setProducts] = useState<POSProduct[]>([])
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
@@ -189,6 +195,7 @@ export const POSPage: React.FC = () => {
           search: posSearch,
           locationId: currentStoreId ?? undefined,
           pageSize: 20,
+          kind: isFood ? 'FinalProduct' : undefined,
         })
         setSearchResults(res.data?.data?.items ?? res.data?.data ?? [])
       } catch {
@@ -364,6 +371,7 @@ export const POSPage: React.FC = () => {
         isActive: true,
         pageSize: 40,
         locationId: currentStoreId ?? undefined,
+        kind: isFood ? 'FinalProduct' : undefined,   // food: show only menu items; repair: show all
       })
       .then((res) => setProducts(res.data.data?.items ?? res.data.data ?? []))
       .catch(() => {})
@@ -742,8 +750,15 @@ export const POSPage: React.FC = () => {
             // Serial number: cart items added via scan have sku = the serial number string
             // (non-scanned items have sku = product.sku barcode, which is different from their id)
             serialNumber: i.type === 'Product' && i.sku && i.sku !== i.productId ? i.sku : undefined,
+            // Food industry — per-item variant + special instructions
+            variantId: isFood ? i.variantId : undefined,
+            notes:     isFood ? i.notes     : undefined,
           }
         }),
+
+        // Food industry — table + order type (null for Repair/Retail)
+        tableId:       isFood ? foodTableId    : undefined,
+        foodOrderType: isFood ? (foodOrderType ?? 'Takeaway') : undefined,
       }
 
       if (!isOnline) {
@@ -1146,6 +1161,16 @@ export const POSPage: React.FC = () => {
             </div>
           </div>
 
+          {/* Food order bar — Dine In / Takeaway / Delivery + table picker */}
+          {isFood && (
+            <div className="px-3 pt-2">
+              <FoodOrderBar
+                companyId={tenant!.id}
+                locationId={currentStoreId ?? ''}
+              />
+            </div>
+          )}
+
           {/* ═══════════════════════════════════════════════════════════════
                ZONE 1 — ITEMS  (always visible, own scroll, ~40% height)
                Items live here permanently so they're never scrolled away.
@@ -1171,7 +1196,13 @@ export const POSPage: React.FC = () => {
                   Items ({cart.items.length})
                 </p>
                 {cart.items.map((item) => (
-                  <CartItemRow key={item.id} item={item} readOnly={!!ticketId} />
+                  <CartItemRow
+                    key={item.id}
+                    item={item}
+                    readOnly={!!ticketId}
+                    showNotes={isFood}
+                    onNotesChange={(id, notes) => dispatch(updateItemNotes({ id, notes }))}
+                  />
                 ))}
               </>
             )}
