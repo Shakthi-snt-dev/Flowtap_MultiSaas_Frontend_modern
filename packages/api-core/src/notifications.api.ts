@@ -8,7 +8,10 @@ export const notificationsApi = {
   }) {
     return api.post('/notifications/broadcast', data)
   },
-  getHistory(params: { companyId?: string; channel?: string; status?: string; page?: number; pageSize?: number }) {
+  getHistory(params: {
+    companyId?: string; channel?: string; status?: string
+    subjectContains?: string; page?: number; pageSize?: number
+  }) {
     return api.get('/notifications', { params })
   },
   send(data: { companyId?: string; type: string; recipient: string; subject: string; payload: string }) {

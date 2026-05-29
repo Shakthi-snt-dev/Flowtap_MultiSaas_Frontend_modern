@@ -192,6 +192,11 @@ export const StockPage: React.FC = () => {
     loadStock()
   }, [loadStock])
 
+  // When store switches, clear cached warehouse list so modal re-fetches for the new store
+  useEffect(() => {
+    setWarehouses([])
+  }, [currentStoreId])
+
   // Load default barcode template on mount
   useEffect(() => {
     inventoryApi.getBarcodeTemplates().then(res => {
@@ -222,13 +227,14 @@ export const StockPage: React.FC = () => {
         })))
       }).catch(() => {})
     if (warehouses.length === 0)
-      inventoryApi.getWarehouses({ companyId: tenant.id }).then((res) => {
+      // Filter to current store's warehouses so stock goes to the right place
+      inventoryApi.getWarehouses({ companyId: tenant.id, storeId: currentStoreId ?? undefined }).then((res) => {
         const data = res.data?.data ?? res.data
         setWarehouses((Array.isArray(data) ? data : []).map((w: Record<string, unknown>) => ({
           id: String(w.id), name: String(w.name ?? ''), code: String(w.code ?? ''),
         })))
       }).catch(() => {})
-  }, [addModalOpen, tenant?.id])
+  }, [addModalOpen, tenant?.id, currentStoreId])
 
   // ── Load adjustment history ───────────────────────────────────────────────────
   const loadAdjustments = useCallback(() => {

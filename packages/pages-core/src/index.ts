@@ -26,6 +26,11 @@ export * from './inventory/SerialsPage'
 export * from './inventory/ReorderPage'
 export * from './inventory/InventorySettingsPage'
 export * from './food/FoodStockAlertPage'
+export * from './food/FoodMenuPage'
+export * from './food/FoodTablesPage'
+export * from './food/FoodKOTPage'
+export * from './food/FoodKDSPage'
+export * from './food/FoodRecipePage'
 
 // Purchasing
 export * from './purchases/PurchasesPage'

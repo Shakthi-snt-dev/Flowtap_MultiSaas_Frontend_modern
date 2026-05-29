@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useMemo, useRef } from 'react'
+﻿import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react'
 import { CategoryFilter } from '@flowtap/ui-core'
 import { ProductCard } from '@flowtap/ui-core'
 import { CartItemRow } from '@flowtap/ui-core'
@@ -360,7 +360,7 @@ export const POSPage: React.FC = () => {
   const canCharge      = isAdvFull || cart.payments.length > 0
 
   // Load products when category or store changes (not when there's an active search)
-  useEffect(() => {
+  const loadProducts = useCallback(() => {
     if (!tenant?.id) return
     if (posSearch.trim()) return  // search results are shown instead
     setLoadingProducts(true)
@@ -371,12 +371,14 @@ export const POSPage: React.FC = () => {
         isActive: true,
         pageSize: 40,
         locationId: currentStoreId ?? undefined,
-        kind: isFood ? 'FinalProduct' : undefined,   // food: show only menu items; repair: show all
+        kind: isFood ? 'FinalProduct' : undefined,
       })
       .then((res) => setProducts(res.data.data?.items ?? res.data.data ?? []))
       .catch(() => {})
       .finally(() => setLoadingProducts(false))
-  }, [tenant?.id, selectedCategory, currentStoreId, posSearch])
+  }, [tenant?.id, selectedCategory, currentStoreId, posSearch, isFood])
+
+  useEffect(() => { loadProducts() }, [loadProducts])
 
   const handleAddPOSProduct = (product: POSProduct) => {
     // Prefer location-specific tax slab (e.g. HST for Canada store) over product default (e.g. GST)
@@ -853,6 +855,8 @@ export const POSPage: React.FC = () => {
 
       dispatch(clearCart())
       setMobileTab('products')
+      // Reload product stock so the grid reflects the deducted quantities immediately
+      loadProducts()
     } catch {
       toast.error('Failed to complete sale. Please try again.')
     } finally {

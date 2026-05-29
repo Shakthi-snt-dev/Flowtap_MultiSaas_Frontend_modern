@@ -6,7 +6,7 @@ import { ProtectedRoute, GuestRoute, OnboardingRoute, PageLoader } from '@flowta
 import { AppLayout } from '@flowtap/pages-core'
 import { authApi, tenantApi, storeSettingsApi } from '@flowtap/api-core'
 import { useSignalR } from '@flowtap/shared'
-import { UtensilsCrossed, ClipboardList, BookOpen, AlertTriangle } from 'lucide-react'
+import { UtensilsCrossed, ClipboardList, BookOpen, AlertTriangle, ChefHat, Monitor } from 'lucide-react'
 
 // Shared pages
 const LoginPage            = React.lazy(() => import('@flowtap/pages-core').then((m) => ({ default: m.LoginPage })))
@@ -42,16 +42,20 @@ const StoreAdminPage        = React.lazy(() => import('@flowtap/pages-core').the
 const NotificationsPage     = React.lazy(() => import('@flowtap/pages-core').then((m) => ({ default: m.NotificationsPage })))
 const SuperAdminPage        = React.lazy(() => import('@flowtap/pages-core').then((m) => ({ default: m.SuperAdminPage })))
 
-// Industry-specific pages
-const TablesPage           = React.lazy(() => import('./pages/TablesPage').then((m) => ({ default: m.TablesPage })))
-const KOTPage              = React.lazy(() => import('./pages/KOTPage').then((m) => ({ default: m.KOTPage })))
-const RecipesPage          = React.lazy(() => import('./pages/RecipesPage').then((m) => ({ default: m.RecipesPage })))
+// Food industry pages — all from @flowtap/pages-core (real API wired)
+const FoodTablesPage       = React.lazy(() => import('@flowtap/pages-core').then((m) => ({ default: m.FoodTablesPage })))
+const FoodKOTPage          = React.lazy(() => import('@flowtap/pages-core').then((m) => ({ default: m.FoodKOTPage })))
+const FoodRecipePage       = React.lazy(() => import('@flowtap/pages-core').then((m) => ({ default: m.FoodRecipePage })))
+const FoodMenuPage         = React.lazy(() => import('@flowtap/pages-core').then((m) => ({ default: m.FoodMenuPage })))
+const FoodKDSPage          = React.lazy(() => import('@flowtap/pages-core').then((m) => ({ default: m.FoodKDSPage })))
 const FoodStockAlertPage   = React.lazy(() => import('@flowtap/pages-core').then((m) => ({ default: m.FoodStockAlertPage })))
 
 const foodNav = [
-  { label: 'Tables',        href: '/tables',              icon: <UtensilsCrossed className="w-5 h-5" /> },
-  { label: 'KOT',           href: '/kot',                 icon: <ClipboardList   className="w-5 h-5" /> },
-  { label: 'Recipes',       href: '/recipes',             icon: <BookOpen        className="w-5 h-5" /> },
+  { label: 'Menu',          href: '/food/menu',           icon: <ChefHat         className="w-5 h-5" /> },
+  { label: 'Tables',        href: '/food/tables',         icon: <UtensilsCrossed className="w-5 h-5" /> },
+  { label: 'KOT',           href: '/food/kot',            icon: <ClipboardList   className="w-5 h-5" /> },
+  { label: 'KDS',           href: '/food/kds',            icon: <Monitor         className="w-5 h-5" /> },
+  { label: 'Recipes',       href: '/food/recipes',        icon: <BookOpen        className="w-5 h-5" /> },
   { label: 'Stock Alerts',  href: '/food/stock-alerts',   icon: <AlertTriangle   className="w-5 h-5" /> },
 ]
 
@@ -176,11 +180,17 @@ const App: React.FC = () => {
             <Route path="admin"                    element={<AdminOverviewPage />} />
             <Route path="store-admin"              element={<StoreAdminPage />} />
             <Route path="notifications"            element={<NotificationsPage />} />
-            {/* Food-specific */}
-            <Route path="tables"              element={<TablesPage />} />
-            <Route path="kot"                 element={<KOTPage />} />
-            <Route path="recipes"             element={<RecipesPage />} />
+            {/* Food-specific — all wired to real backend APIs */}
+            <Route path="food/menu"           element={<FoodMenuPage />} />
+            <Route path="food/tables"         element={<FoodTablesPage />} />
+            <Route path="food/kot"            element={<FoodKOTPage />} />
+            <Route path="food/kds"            element={<FoodKDSPage />} />
+            <Route path="food/recipes"        element={<FoodRecipePage />} />
             <Route path="food/stock-alerts"   element={<FoodStockAlertPage />} />
+            {/* Legacy redirects for old routes */}
+            <Route path="tables"              element={<Navigate to="/food/tables" replace />} />
+            <Route path="kot"                 element={<Navigate to="/food/kot" replace />} />
+            <Route path="recipes"             element={<Navigate to="/food/recipes" replace />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Route>
         </Route>

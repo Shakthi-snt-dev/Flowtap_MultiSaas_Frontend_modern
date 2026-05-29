@@ -34,6 +34,7 @@ export interface Store {
   type?: number
   isDefault?: boolean
   timeZoneId?: string
+  managerEmployeeId?: string
 }
 
 interface TenantState {

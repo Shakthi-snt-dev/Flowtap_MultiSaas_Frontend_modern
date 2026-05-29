@@ -5,7 +5,7 @@ import {
 } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { useAppSelector } from '@flowtap/store'
-import { inventoryApi } from '@flowtap/api-core'
+import { inventoryApi, employeesApi } from '@flowtap/api-core'
 import {
   Button, Input, Modal, Badge, Card, CardHeader, CardBody, Table, Spinner, Select,
 } from '@flowtap/ui-core'
@@ -27,7 +27,10 @@ interface WarehouseData {
   hasRackSystem: boolean   // whether rack/bin tracking is enabled
   totalSKUs: number
   totalValue: number
+  managerEmployeeId?: string
 }
+
+interface EmployeeOption { id: string; name: string; role?: string }
 
 interface Rack {
   id: string
@@ -66,6 +69,7 @@ const WH_TYPES: Record<number, { label: string; color: string }> = {
   1: { label: 'In-Store',           color: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400' },
   2: { label: 'Location Warehouse', color: 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400' },
   3: { label: 'Central Warehouse',  color: 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400' },
+  4: { label: 'Kitchen Store',      color: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' },
 }
 
 const statusVariant = (s: StockRow['status']) =>
@@ -74,11 +78,12 @@ const statusVariant = (s: StockRow['status']) =>
 interface WarehouseForm {
   name: string; code: string; address: string; city: string; state: string
   country: string; postalCode: string; type: number; storeId: string; hasRackSystem: boolean
+  managerEmployeeId: string
 }
 
 const EMPTY_WH: WarehouseForm = {
   name: '', code: '', address: '', city: '', state: '', country: '', postalCode: '',
-  type: 1, storeId: '', hasRackSystem: false,
+  type: 1, storeId: '', hasRackSystem: false, managerEmployeeId: '',
 }
 
 // ─── Rack Form Modal ──────────────────────────────────────────────────────────
@@ -623,6 +628,7 @@ export const WarehousePage: React.FC = () => {
   const [warehouses, setWarehouses] = useState<WarehouseData[]>([])
   const [loading, setLoading] = useState(false)
   const [selectedWarehouse, setSelectedWarehouse] = useState<WarehouseData | null>(null)
+  const [employees, setEmployees] = useState<EmployeeOption[]>([])
 
   const [modalOpen, setModalOpen] = useState(false)
   const [editWarehouse, setEditWarehouse] = useState<WarehouseData | null>(null)
@@ -644,11 +650,11 @@ export const WarehousePage: React.FC = () => {
         setWarehouseTypeOptions(filtered)
       })
       .catch(() => {
-        // Fallback options
         setWarehouseTypeOptions([
           { value: '1', label: 'In-Store' },
           { value: '2', label: 'Location Warehouse' },
-          { value: '3', label: 'Central Warehouse' }
+          { value: '3', label: 'Central Warehouse' },
+          { value: '4', label: 'Kitchen Store' },
         ])
       })
   }, [])
@@ -671,15 +677,17 @@ export const WarehousePage: React.FC = () => {
           postalCode: w.postalCode ? String(w.postalCode) : undefined,
           type: typeof w.type === 'number'
             ? w.type
-            : w.type === 'InStore' ? 1
+            : w.type === 'InStore'           ? 1
             : w.type === 'LocationWarehouse' ? 2
-            : w.type === 'CentralWarehouse' ? 3
+            : w.type === 'CentralWarehouse'  ? 3
+            : w.type === 'KitchenStore'      ? 4
             : Number(w.type ?? 2),
           storeId: w.storeId ? String(w.storeId) : undefined,
           storeName: w.storeName ? String(w.storeName) : undefined,
           hasRackSystem: Boolean(w.hasRackSystem ?? false),
           totalSKUs: Number(w.totalSKUs ?? w.skuCount ?? 0),
           totalValue: Number(w.totalValue ?? 0),
+          managerEmployeeId: w.managerEmployeeId ? String(w.managerEmployeeId) : undefined,
         }))
         setWarehouses(items)
       })
@@ -688,6 +696,21 @@ export const WarehousePage: React.FC = () => {
   }, [tenant?.id, currentStoreId])
 
   useEffect(() => { loadWarehouses() }, [loadWarehouses])
+
+  // Load employees once for the manager dropdown
+  useEffect(() => {
+    if (!tenant?.id) return
+    employeesApi.getEmployees({ companyId: tenant.id, isActive: true, pageSize: 200 })
+      .then((res) => {
+        const raw: Record<string, unknown>[] = res.data?.data?.items ?? res.data?.data ?? []
+        setEmployees(raw.map((e) => ({
+          id: String(e.id ?? ''),
+          name: String(e.name ?? e.fullName ?? ''),
+          role: e.role ? String(e.role) : undefined,
+        })))
+      })
+      .catch(() => {})
+  }, [tenant?.id])
 
   // If selected warehouse gets reloaded, sync its reference
   useEffect(() => {
@@ -721,6 +744,7 @@ export const WarehousePage: React.FC = () => {
       type: wh.type,
       storeId: wh.storeId ?? '',
       hasRackSystem: wh.hasRackSystem,
+      managerEmployeeId: wh.managerEmployeeId ?? '',
     })
     setModalOpen(true)
   }
@@ -751,6 +775,7 @@ export const WarehousePage: React.FC = () => {
         country: form.country.trim() || undefined,
         postalCode: form.postalCode.trim() || undefined,
         hasRackSystem: form.hasRackSystem,
+        managerEmployeeId: form.managerEmployeeId || undefined,
       }
       if (editWarehouse) {
         await inventoryApi.updateWarehouse(editWarehouse.id, payload)
@@ -810,7 +835,8 @@ export const WarehousePage: React.FC = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {inStore.map((wh) => <WarehouseCard key={wh.id} wh={wh} selected={selectedWarehouse?.id === wh.id}
                   onSelect={() => setSelectedWarehouse(selectedWarehouse?.id === wh.id ? null : wh)}
-                  onEdit={() => openEdit(wh)} onDelete={() => handleDeleteWarehouse(wh)} />)}
+                  onEdit={() => openEdit(wh)} onDelete={() => handleDeleteWarehouse(wh)}
+                  employees={employees} />)}
               </div>
             </div>
           )}
@@ -824,7 +850,8 @@ export const WarehousePage: React.FC = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {external.map((wh) => <WarehouseCard key={wh.id} wh={wh} selected={selectedWarehouse?.id === wh.id}
                   onSelect={() => setSelectedWarehouse(selectedWarehouse?.id === wh.id ? null : wh)}
-                  onEdit={() => openEdit(wh)} onDelete={() => handleDeleteWarehouse(wh)} />)}
+                  onEdit={() => openEdit(wh)} onDelete={() => handleDeleteWarehouse(wh)}
+                  employees={employees} />)}
               </div>
             </div>
           )}
@@ -868,11 +895,10 @@ export const WarehousePage: React.FC = () => {
             value={String(form.type)}
             onChange={setF('type')}
             options={warehouseTypeOptions.filter(o => {
-              if (editWarehouse && String(editWarehouse.type) === o.value) return true
-              if (hasInStoreWarehouse && o.value === '1') return false
+              // Hide InStore if another InStore already exists (unless it's this warehouse's current type)
+              if (o.value === '1' && hasInStoreWarehouse && String(editWarehouse?.type) !== '1') return false
               return true
             })}
-            disabled={!!editWarehouse}
           />
 
 
@@ -884,6 +910,20 @@ export const WarehousePage: React.FC = () => {
             <Input label="State" value={form.state} onChange={setF('state')} placeholder="State" />
             <Input label="Postal Code" value={form.postalCode} onChange={setF('postalCode')} placeholder="PIN" />
           </div>
+
+          {/* Manager employee */}
+          <Select
+            label="Warehouse Manager (optional)"
+            value={form.managerEmployeeId}
+            onChange={setF('managerEmployeeId')}
+            options={[
+              { value: '', label: 'No manager assigned' },
+              ...employees.map((e) => ({
+                value: e.id,
+                label: e.role ? `${e.name} — ${e.role}` : e.name,
+              })),
+            ]}
+          />
 
           {/* Rack system toggle */}
           <div className="flex items-center justify-between p-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
@@ -921,9 +961,13 @@ interface WarehouseCardProps {
   onSelect: () => void
   onEdit: () => void
   onDelete: () => void
+  employees: EmployeeOption[]
 }
 
-const WarehouseCard: React.FC<WarehouseCardProps> = ({ wh, selected, onSelect, onEdit, onDelete }) => {
+const WarehouseCard: React.FC<WarehouseCardProps> = ({ wh, selected, onSelect, onEdit, onDelete, employees }) => {
+  const managerName = wh.managerEmployeeId
+    ? employees.find((e) => e.id === wh.managerEmployeeId)?.name
+    : undefined
   const typeInfo = WH_TYPES[wh.type] ?? WH_TYPES[2]
   return (
     <div className={`bg-white dark:bg-gray-900 rounded-2xl border-2 transition-all ${
@@ -950,6 +994,13 @@ const WarehouseCard: React.FC<WarehouseCardProps> = ({ wh, selected, onSelect, o
         {(wh.address || wh.city) && (
           <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
             {[wh.address, wh.city, wh.state].filter(Boolean).join(', ')}
+          </p>
+        )}
+
+        {/* Manager */}
+        {managerName && (
+          <p className="text-xs text-indigo-600 dark:text-indigo-400 flex items-center gap-1">
+            👤 <span className="truncate">{managerName}</span>
           </p>
         )}
 

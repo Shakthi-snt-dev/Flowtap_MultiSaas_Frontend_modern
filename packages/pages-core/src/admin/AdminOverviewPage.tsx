@@ -24,6 +24,7 @@ import { authApi } from '@flowtap/api-core'
 import { inventoryApi } from '@flowtap/api-core'
 import { salesApi } from '@flowtap/api-core'
 import { notificationsApi } from '@flowtap/api-core'
+import { employeesApi } from '@flowtap/api-core'
 import { useCurrency } from '@flowtap/shared'
 
 // ── Types ────────────────────────────────────────────────────────────────────
@@ -126,7 +127,7 @@ const EMPTY_STORE_FORM = {
   name: '', locationCode: '', type: '1',
   phone: '', email: '', address: '',
   city: '', state: '', country: '', currency: '', postalCode: '',
-  timeZoneId: '',
+  timeZoneId: '', managerEmployeeId: '',
 }
 type StoreFormState = typeof EMPTY_STORE_FORM
 
@@ -785,6 +786,7 @@ export const AdminOverviewPage: React.FC = () => {
 
   const [editStore, setEditStore]   = useState<StoreRecord | null>(null)
   const [editForm, setEditForm]     = useState<StoreFormState>(EMPTY_STORE_FORM)
+  const [storeEmployees, setStoreEmployees] = useState<{ id: string; name: string; role?: string }[]>([])
   const [editErrors, setEditErrors] = useState<Record<string, string>>({})
   const [editing, setEditing]       = useState(false)
 
@@ -857,20 +859,34 @@ export const AdminOverviewPage: React.FC = () => {
   const openEdit = (store: StoreRecord) => {
     setEditStore(store)
     setEditForm({
-      name:         store.name ?? '',
-      locationCode: store.locationCode ?? '',
-      type:         store.type != null ? String(store.type) : '1',
-      phone:        store.phone ?? '',
-      email:        store.email ?? '',
-      address:      store.address ?? '',
-      city:         store.city ?? '',
-      state:        store.state ?? '',
-      country:      store.countryCode ?? tenant?.country ?? '',
-      currency:     store.currencyCode ?? tenant?.currency ?? '',
-      postalCode:   store.postalCode ?? '',
-      timeZoneId:   store.timeZoneId ?? '',
+      name:               store.name ?? '',
+      locationCode:       store.locationCode ?? '',
+      type:               store.type != null ? String(store.type) : '1',
+      phone:              store.phone ?? '',
+      email:              store.email ?? '',
+      address:            store.address ?? '',
+      city:               store.city ?? '',
+      state:              store.state ?? '',
+      country:            store.countryCode ?? tenant?.country ?? '',
+      currency:           store.currencyCode ?? tenant?.currency ?? '',
+      postalCode:         store.postalCode ?? '',
+      timeZoneId:         store.timeZoneId ?? '',
+      managerEmployeeId:  store.managerEmployeeId ?? '',
     })
     setEditErrors({})
+    // Load employees for the manager dropdown
+    if (tenant?.id) {
+      employeesApi.getEmployees({ companyId: tenant.id, locationId: store.id, isActive: true, pageSize: 200 })
+        .then((res) => {
+          const raw: Record<string, unknown>[] = res.data?.data?.items ?? res.data?.data ?? []
+          setStoreEmployees(raw.map((e) => ({
+            id: String(e.id ?? ''),
+            name: String(e.name ?? e.fullName ?? ''),
+            role: e.role ? String(e.role) : undefined,
+          })))
+        })
+        .catch(() => setStoreEmployees([]))
+    }
   }
 
   const handleAdd = async () => {
@@ -940,7 +956,8 @@ export const AdminOverviewPage: React.FC = () => {
         city:         editForm.city.trim() || undefined,
         state:        editForm.state.trim() || undefined,
         postalCode:   editForm.postalCode.trim() || undefined,
-        timeZoneId:   editForm.timeZoneId || undefined,
+        timeZoneId:         editForm.timeZoneId || undefined,
+        managerEmployeeId:  editForm.managerEmployeeId || undefined,
       })
       toast.success('Store updated successfully')
       setEditStore(null)
@@ -2098,6 +2115,31 @@ export const AdminOverviewPage: React.FC = () => {
           </div>
         }>
         <StoreFormFields form={editForm} errors={editErrors} onChange={makeOnChange(setEditForm)} />
+
+        {/* Store Manager — shown only in edit (employee must already be assigned to this store) */}
+        <div className="mt-4">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            Store Manager <span className="text-xs font-normal text-gray-400">(optional — used for stock alert routing)</span>
+          </label>
+          <select
+            value={editForm.managerEmployeeId}
+            onChange={(e) => setEditForm((f) => ({ ...f, managerEmployeeId: e.target.value }))}
+            className="w-full px-3 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg text-sm
+                       focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800 dark:text-white"
+          >
+            <option value="">No manager assigned</option>
+            {storeEmployees.map((e) => (
+              <option key={e.id} value={e.id}>
+                {e.role ? `${e.name} — ${e.role}` : e.name}
+              </option>
+            ))}
+          </select>
+          {storeEmployees.length === 0 && (
+            <p className="mt-1 text-xs text-gray-400">
+              Assign employees to this store first via the Employees page.
+            </p>
+          )}
+        </div>
       </Modal>
     </div>
   )
