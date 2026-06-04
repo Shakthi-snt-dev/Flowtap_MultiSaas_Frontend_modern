@@ -13,9 +13,9 @@
     "react-router-dom": "^6.22.3"
   },
   "dependencies": {
-    "@flowtap/api-core": "workspace:*",
-    "@flowtap/shared":   "workspace:*",
-    "@flowtap/store":    "workspace:*",
+    "@flowtap/api-core": "*",
+    "@flowtap/shared":   "*",
+    "@flowtap/store":    "*",
     "clsx":              "^2.1.0",
     "lucide-react":      "^0.344.0",
     "react-hot-toast":   "^2.4.1",

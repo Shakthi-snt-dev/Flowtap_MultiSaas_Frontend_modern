@@ -12,10 +12,11 @@ export const Card: React.FC<CardProps> = ({ children, className, onClick, hovera
   <div
     onClick={onClick}
     className={cn(
-      'bg-white dark:bg-gray-800 rounded-xl shadow-card border border-gray-100 dark:border-gray-700',
-      hoverable && 'cursor-pointer hover:shadow-md hover:border-blue-200 dark:hover:border-blue-700 transition-all',
+      'bg-white dark:bg-gray-800 rounded-xl shadow-card',
+      hoverable && 'cursor-pointer hover:shadow-md transition-all',
       className
     )}
+    style={{ border: '1px solid var(--card-border)' }}
   >
     {children}
   </div>

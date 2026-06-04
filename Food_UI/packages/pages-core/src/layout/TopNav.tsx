@@ -220,10 +220,16 @@ export const TopNav: React.FC = () => {
 
   return (
     <>
-    <header className="fixed top-0 right-0 left-0 h-16 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 z-20 flex items-center px-4 gap-3">
+    <header
+      className="fixed top-0 right-0 left-0 h-16 z-20 flex items-center px-4 gap-3 border-b"
+      style={{ background: 'var(--header-bg)', borderColor: 'var(--header-border)' }}
+    >
       <button
         onClick={() => dispatch(toggleSidebar())}
-        className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500 transition-colors"
+        className="p-2 rounded-lg transition-colors"
+        style={{ color: 'var(--header-icon)' }}
+        onMouseEnter={e => (e.currentTarget.style.background = 'var(--header-hover-bg)')}
+        onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
       >
         <Menu className="w-5 h-5" />
       </button>
@@ -235,17 +241,16 @@ export const TopNav: React.FC = () => {
         {/* Employees with only one store see a non-interactive pill; admins see a dropdown */}
         <button
           onClick={() => visibleStores.length > 1 ? setStoreMenuOpen((p) => !p) : undefined}
-          className={[
-            'flex items-center gap-2 px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-sm transition-colors',
-            visibleStores.length > 1
-              ? 'hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer'
-              : 'cursor-default',
-          ].join(' ')}
+          className={['flex items-center gap-2 px-3 py-1.5 rounded-lg border text-sm transition-colors',
+            visibleStores.length > 1 ? 'cursor-pointer' : 'cursor-default'].join(' ')}
+          style={{ borderColor: 'var(--header-border)', color: 'var(--header-text)' }}
+          onMouseEnter={e => visibleStores.length > 1 && (e.currentTarget.style.background = 'var(--header-hover-bg)')}
+          onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
         >
           <span className="w-2 h-2 bg-green-500 rounded-full flex-shrink-0" />
-          <span className="text-gray-700 dark:text-gray-200 font-medium max-w-[140px] truncate">{storeName}</span>
+          <span className="font-medium max-w-[140px] truncate" style={{ color: 'var(--header-text)' }}>{storeName}</span>
           {visibleStores.length > 1 && (
-            <ChevronDown className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" />
+            <ChevronDown className="w-3.5 h-3.5 flex-shrink-0" style={{ color: 'var(--header-icon)' }} />
           )}
         </button>
         {storeMenuOpen && visibleStores.length > 1 && (
@@ -285,11 +290,14 @@ export const TopNav: React.FC = () => {
       {/* Switch User button */}
       <button
         onClick={handleOpenSwitch}
-        className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors group"
+        className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border transition-colors"
+        style={{ borderColor: 'var(--header-border)', color: 'var(--header-text)' }}
+        onMouseEnter={e => (e.currentTarget.style.background = 'var(--header-hover-bg)')}
+        onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
         title="Switch user"
       >
-        <UserCog className="w-4 h-4 text-gray-500 group-hover:text-blue-500 transition-colors" />
-        <span className="hidden sm:block text-xs font-medium text-gray-600 dark:text-gray-300">
+        <UserCog className="w-4 h-4" style={{ color: 'var(--header-icon)' }} />
+        <span className="hidden sm:block text-xs font-medium" style={{ color: 'var(--header-text)' }}>
           Switch User
         </span>
       </button>
@@ -297,7 +305,10 @@ export const TopNav: React.FC = () => {
       {/* Theme Toggle */}
       <button
         onClick={toggle}
-        className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500 dark:text-gray-400 transition-colors"
+        className="p-2 rounded-lg transition-colors"
+        style={{ color: 'var(--header-icon)' }}
+        onMouseEnter={e => (e.currentTarget.style.background = 'var(--header-hover-bg)')}
+        onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
       >
         {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
       </button>
@@ -306,7 +317,10 @@ export const TopNav: React.FC = () => {
       <div className="relative" ref={notifRef}>
         <button
           onClick={() => { setNotifOpen((p) => !p); if (!notifOpen) setUnreadCount(0) }}
-          className="relative p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500 dark:text-gray-400 transition-colors"
+          className="relative p-2 rounded-lg transition-colors"
+          style={{ color: 'var(--header-icon)' }}
+          onMouseEnter={e => (e.currentTarget.style.background = 'var(--header-hover-bg)')}
+          onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
         >
           <Bell className="w-5 h-5" />
           {(unreadCount + broadcasts.length + dmUnread) > 0 && (
@@ -461,7 +475,9 @@ export const TopNav: React.FC = () => {
       <div className="relative">
         <button
           onClick={() => setUserMenuOpen((p) => !p)}
-          className="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+          className="flex items-center gap-2 px-2 py-1.5 rounded-lg transition-colors"
+          onMouseEnter={e => (e.currentTarget.style.background = 'var(--header-hover-bg)')}
+          onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
         >
           <div className={cn(
             'w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-semibold relative',
@@ -474,8 +490,8 @@ export const TopNav: React.FC = () => {
             )}
           </div>
           <div className="hidden sm:block text-left">
-            <div className="text-sm font-medium text-gray-900 dark:text-white leading-tight">{user?.name}</div>
-            <div className="text-xs text-gray-500 dark:text-gray-400">
+            <div className="text-sm font-medium leading-tight" style={{ color: 'var(--header-text)' }}>{user?.name}</div>
+            <div className="text-xs" style={{ color: 'var(--header-text)', opacity: 0.7 }}>
               {ownerUser ? (user?.jobTitle ?? 'Employee') : user?.email}
             </div>
           </div>

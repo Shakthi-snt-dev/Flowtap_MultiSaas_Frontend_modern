@@ -1,8 +1,10 @@
 {
   "name": "flowtap-monorepo",
   "private": true,
-  "packageManager": "pnpm@11.3.0",
+  "packageManager": "npm@10.9.2",
+  "workspaces": ["apps/*", "packages/*"],
   "scripts": {
+    "dev":        "turbo run dev --filter=@flowtap/app-medical",
     "dev:food":      "turbo run dev --filter=@flowtap/app-food",
     "dev:hotel":     "turbo run dev --filter=@flowtap/app-hotel",
     "dev:jewellery": "turbo run dev --filter=@flowtap/app-jewellery",

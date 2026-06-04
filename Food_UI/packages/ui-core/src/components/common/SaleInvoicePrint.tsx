@@ -146,7 +146,7 @@ export const SaleInvoicePrint: React.FC<SaleInvoicePrintProps> = ({ sale, onClos
         {/* ── Header band ── */}
         <div
           className="relative overflow-hidden px-8 pt-7 pb-6"
-          style={{ background: 'linear-gradient(135deg, #1e3a5f 0%, #1d4ed8 100%)' }}
+          style={{ background: 'linear-gradient(135deg, var(--sidebar-logo-bg, #FF8A24) 0%, var(--sidebar-active-bg, #E87400) 100%)' }}
         >
           {/* decorative circles */}
           <div className="absolute -top-6 -right-6 w-32 h-32 rounded-full opacity-10" style={{ background: '#fff' }} />
@@ -252,7 +252,7 @@ export const SaleInvoicePrint: React.FC<SaleInvoicePrintProps> = ({ sale, onClos
                   </td>
                   <td className="py-3 text-right align-top" style={{ paddingRight: 8 }}>
                     {item.taxPercent > 0
-                      ? <span className="text-xs font-medium text-indigo-600 bg-indigo-50 px-1.5 py-0.5 rounded">{item.taxPercent}%</span>
+                      ? <span className="text-xs font-medium text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded">{item.taxPercent}%</span>
                       : <span className="text-gray-300">—</span>
                     }
                   </td>

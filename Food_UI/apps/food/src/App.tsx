@@ -66,6 +66,19 @@ const App: React.FC = () => {
   const connection = useSignalR()
   const signalRBound = useRef(false)
 
+  // Always apply Food Orange — this is the dedicated Food industry app
+  useEffect(() => {
+    const NON_FOOD = ['blue', 'purple', 'green', 'orange', 'rose', 'teal', 'amber', 'slate']
+    const savedAccent = localStorage.getItem('accentColor')
+    const accent = (!savedAccent || NON_FOOD.includes(savedAccent)) ? 'food-orange' : savedAccent
+    const savedTheme = localStorage.getItem('colorTheme')
+    const theme = (!savedTheme || savedTheme === 'default') ? 'food-light' : savedTheme
+    localStorage.setItem('accentColor', accent)
+    localStorage.setItem('colorTheme', theme)
+    dispatch(applyAppearance({ accentColor: accent, colorTheme: theme, themeMode: 'light', borderRadius: 'normal', fontFamily: 'inter' }))
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   // Global 401 handler — soft logout without hard page reload
   useEffect(() => {
     const handle401 = () => { dispatch(logout()); dispatch(clearTenant()) }

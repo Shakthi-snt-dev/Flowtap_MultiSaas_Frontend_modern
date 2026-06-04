@@ -10,11 +10,12 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const variants = {
-  primary: 'bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500 disabled:bg-blue-300',
-  secondary: 'bg-gray-100 text-gray-700 hover:bg-gray-200 focus:ring-gray-400 dark:bg-gray-700 dark:text-gray-200',
-  ghost: 'bg-transparent text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800',
-  danger: 'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500 disabled:bg-red-300',
-  outline: 'border border-gray-300 text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300',
+  // primary/outline use --a-* CSS vars → automatically pick up the active accent (food-orange, blue, etc.)
+  primary:   'bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500 disabled:bg-blue-300',
+  secondary: 'bg-primary-50 text-blue-700 hover:bg-primary-100 focus:ring-blue-400 dark:bg-gray-700 dark:text-gray-200',
+  ghost:     'bg-transparent text-gray-600 hover:bg-primary-50 dark:text-gray-300 dark:hover:bg-gray-800',
+  danger:    'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500 disabled:bg-red-300',
+  outline:   'border border-blue-300 text-blue-700 hover:bg-primary-50 dark:border-gray-600 dark:text-gray-300',
 }
 
 const sizes = {

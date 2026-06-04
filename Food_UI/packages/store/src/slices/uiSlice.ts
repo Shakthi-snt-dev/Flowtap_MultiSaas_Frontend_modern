@@ -18,9 +18,9 @@ function persist(key: string, value: string) {
 const initialState: UiState = {
   sidebarOpen: true,
   theme: (localStorage.getItem('theme') as 'light' | 'dark' | 'system') ?? 'light',
-  colorTheme: localStorage.getItem('colorTheme') ?? 'default',
+  colorTheme: localStorage.getItem('colorTheme') ?? 'food-light',    // Food UI default
   isOffline: false,
-  accentColor: localStorage.getItem('accentColor') ?? 'blue',
+  accentColor: localStorage.getItem('accentColor') ?? 'food-orange', // Food UI default
   fontFamily: localStorage.getItem('fontFamily') ?? 'inter',
   borderRadius: localStorage.getItem('borderRadius') ?? 'normal',
   sidebarDensity: localStorage.getItem('sidebarDensity') ?? 'comfortable',

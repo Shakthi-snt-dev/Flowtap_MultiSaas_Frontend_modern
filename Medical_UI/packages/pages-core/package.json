@@ -8,10 +8,10 @@
   },
   
   "dependencies": {
-    "@flowtap/ui-core": "workspace:*",
-    "@flowtap/store": "workspace:*",
-    "@flowtap/api-core": "workspace:*",
-    "@flowtap/shared": "workspace:*",
+    "@flowtap/ui-core": "*",
+    "@flowtap/store": "*",
+    "@flowtap/api-core": "*",
+    "@flowtap/shared": "*",
     "axios": "^1.6.7",
     "date-fns": "^3.3.1",
     "lucide-react": "^0.344.0",

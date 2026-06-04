@@ -19,11 +19,8 @@ ARG VITE_API_URL
 
 WORKDIR /app
 
-# Install pnpm
-RUN npm install -g pnpm@11.3.0
-
 # Copy workspace manifests for layer caching
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json tsconfig.base.json ./
+COPY package.json turbo.json tsconfig.base.json ./
 
 # Copy all package.json files for workspace resolution
 COPY packages/ui-core/package.json      packages/ui-core/
@@ -34,7 +31,7 @@ COPY packages/pages-core/package.json   packages/pages-core/
 COPY apps/${APP}/package.json           apps/${APP}/
 
 # Install all deps (workspace)
-RUN pnpm install --frozen-lockfile
+RUN npm install
 
 # Copy all source code
 COPY packages/ packages/
@@ -43,12 +40,12 @@ COPY apps/${APP}/ apps/${APP}/
 # Build shared packages first, then the app
 WORKDIR /app
 ENV VITE_API_URL=${VITE_API_URL}
-RUN pnpm --filter @flowtap/shared build 2>/dev/null || true
-RUN pnpm --filter @flowtap/ui-core build 2>/dev/null || true
-RUN pnpm --filter @flowtap/store build 2>/dev/null || true
-RUN pnpm --filter @flowtap/api-core build 2>/dev/null || true
-RUN pnpm --filter @flowtap/pages-core build 2>/dev/null || true
-RUN pnpm --filter @flowtap/app-${APP} build
+RUN npm run build -w @flowtap/shared 2>/dev/null || true
+RUN npm run build -w @flowtap/ui-core 2>/dev/null || true
+RUN npm run build -w @flowtap/store 2>/dev/null || true
+RUN npm run build -w @flowtap/api-core 2>/dev/null || true
+RUN npm run build -w @flowtap/pages-core 2>/dev/null || true
+RUN cd apps/${APP} && npx vite build
 
 # ── Stage 2: nginx serve ───────────────────────────────────────────────────────
 FROM nginx:alpine AS runtime

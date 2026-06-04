@@ -934,10 +934,13 @@ interface ColorTheme {
   page: string           // page bg hex for preview
   sidebarText: string    // text colour for preview dots
   dark: boolean          // true = always forces .dark on <html>
-  group: 'classic' | 'gradient' | 'red' | 'professional' | 'metallic'
+  group: 'food' | 'classic' | 'gradient' | 'red' | 'professional' | 'metallic'
 }
 
 const COLOR_THEMES: ColorTheme[] = [
+  // ── Food industry themes (shown first) ──────────────────────────────────
+  { id: 'food-light', label: 'Food Orange', group: 'food', dark: false, sidebar: '#FFFFFF', page: '#FFF4E8', sidebarText: '#FF8A24' },
+
   // ── Classic flat-colour themes ──────────────────────────────────────────
   { id: 'default',  label: 'Default',  group: 'classic',  dark: false, sidebar: '#ffffff', page: '#f9fafb', sidebarText: '#6b7280' },
   { id: 'ocean',    label: 'Ocean',    group: 'classic',  dark: false, sidebar: '#0c1f3f', page: '#eef6ff', sidebarText: '#93b8d5' },
@@ -984,6 +987,7 @@ const COLOR_THEMES: ColorTheme[] = [
   // ── Blue & Neutral — the user-requested new themes ───────────────────────
 ]
 
+const FOOD_THEMES         = COLOR_THEMES.filter((t) => t.group === 'food')
 const CLASSIC_THEMES      = COLOR_THEMES.filter((t) => t.group === 'classic')
 const GRADIENT_THEMES     = COLOR_THEMES.filter((t) => t.group === 'gradient')
 const RED_THEMES          = COLOR_THEMES.filter((t) => t.group === 'red')
@@ -991,7 +995,7 @@ const PROFESSIONAL_THEMES = COLOR_THEMES.filter((t) => t.group === 'professional
 const METALLIC_THEMES     = COLOR_THEMES.filter((t) => t.group === 'metallic')
 
 // Theme group tab definitions
-type ThemeGroupTab =  'classic' | 'gradient' | 'red' | 'professional' | 'metallic'
+type ThemeGroupTab = 'food' | 'classic' | 'gradient' | 'red' | 'professional' | 'metallic'
 interface ThemeGroupDef {
   id: ThemeGroupTab
   label: string
@@ -1001,6 +1005,7 @@ interface ThemeGroupDef {
   themes: ColorTheme[]
 }
 const THEME_GROUPS: ThemeGroupDef[] = [
+  { id: 'food',         label: 'Food',     badge: '⭐ Default', badgeCls: 'bg-[#FF8A24] text-white',                                          dot: 'bg-[#FF8A24]',                                     themes: FOOD_THEMES },
   { id: 'classic',      label: 'Classic',                                                                                                  dot: 'bg-gradient-to-br from-white to-slate-800',        themes: CLASSIC_THEMES },
   { id: 'gradient',     label: 'Gradients',      badge: 'NEW', badgeCls: 'bg-gradient-to-r from-purple-500 to-pink-500 text-white',     dot: 'bg-gradient-to-br from-purple-600 to-pink-500',    themes: GRADIENT_THEMES },
   { id: 'red',          label: 'Red & Bold',     badge: 'HOT', badgeCls: 'bg-gradient-to-r from-red-600 to-rose-500 text-white',        dot: 'bg-gradient-to-br from-red-600 to-rose-700',       themes: RED_THEMES },
@@ -1062,6 +1067,7 @@ const ThemeCard: React.FC<{
 }
 
 const ACCENT_COLORS = [
+  { id: 'food-orange', label: 'Food Orange', color: '#FF8A24' },  // Food industry default
   { id: 'blue',   label: 'Blue',   color: '#2563eb' },
   { id: 'purple', label: 'Purple', color: '#7c3aed' },
   { id: 'green',  label: 'Green',  color: '#059669' },
@@ -1100,7 +1106,7 @@ const ColorThemeCard: React.FC<{
   ui: { colorTheme: string }
   dispatch: (a: ReturnType<typeof setColorTheme>) => void
 }> = ({ ui, dispatch }) => {
-  const [activeGroup, setActiveGroup] = useState<ThemeGroupTab>('classic')
+  const [activeGroup, setActiveGroup] = useState<ThemeGroupTab>('food')
   const group = THEME_GROUPS.find(g => g.id === activeGroup)!
 
   // If the currently-selected theme belongs to a different group, show that group

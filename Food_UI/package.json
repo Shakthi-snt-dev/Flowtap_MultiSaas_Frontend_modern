@@ -1,8 +1,10 @@
 {
   "name": "flowtap-monorepo",
   "private": true,
-  "packageManager": "pnpm@11.3.0",
+  "packageManager": "npm@10.9.2",
+  "workspaces": ["apps/*", "packages/*"],
   "scripts": {
+    "dev":        "turbo run dev --filter=@flowtap/app-food",
     "dev:food":      "turbo run dev --filter=@flowtap/app-food",
     "dev:hotel":     "turbo run dev --filter=@flowtap/app-hotel",
     "dev:jewellery": "turbo run dev --filter=@flowtap/app-jewellery",
@@ -20,5 +22,10 @@
   "devDependencies": {
     "turbo": "^2.0.0",
     "typescript": "^5.2.2"
+  },
+  "overrides": {
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "@reduxjs/toolkit": "2.3.0"
   }
 }

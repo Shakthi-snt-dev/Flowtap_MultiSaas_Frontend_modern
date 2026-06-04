@@ -11,11 +11,11 @@
                     "lint":  "eslint . --ext ts,tsx"
                 },
     "dependencies":  {
-                         "@flowtap/ui-core":  "workspace:*",
-                         "@flowtap/store":  "workspace:*",
-                         "@flowtap/api-core":  "workspace:*",
-                         "@flowtap/shared":  "workspace:*",
-                         "@flowtap/pages-core":  "workspace:*",
+                         "@flowtap/ui-core":  "*",
+                         "@flowtap/store":  "*",
+                         "@flowtap/api-core":  "*",
+                         "@flowtap/shared":  "*",
+                         "@flowtap/pages-core":  "*",
                          "react":  "^18.2.0",
                          "react-dom":  "^18.2.0",
                          "react-router-dom":  "^6.22.3",

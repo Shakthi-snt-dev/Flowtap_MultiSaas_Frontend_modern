@@ -24,17 +24,15 @@ export function Table<T extends object>({
   onRowClick,
 }: TableProps<T>) {
   return (
-    <div className="overflow-x-auto rounded-xl border border-gray-200 dark:border-gray-700">
+    <div className="overflow-x-auto rounded-xl border" style={{ borderColor: 'var(--table-border)' }}>
       <table className="w-full text-sm">
-        <thead className="bg-gray-50 dark:bg-gray-800">
+        <thead style={{ background: 'var(--table-header-bg)' }}>
           <tr>
             {columns.map((col) => (
               <th
                 key={String(col.key)}
-                className={cn(
-                  'px-4 py-3 text-left font-semibold text-gray-600 dark:text-gray-300 whitespace-nowrap',
-                  col.className
-                )}
+                className={cn('px-4 py-3 text-left font-semibold whitespace-nowrap', col.className)}
+                style={{ color: 'var(--table-header-text)' }}
               >
                 {col.header}
               </th>
@@ -46,7 +44,8 @@ export function Table<T extends object>({
             <tr>
               <td colSpan={columns.length} className="py-12 text-center text-gray-400">
                 <div className="flex justify-center">
-                  <div className="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+                  <div className="w-6 h-6 border-2 border-t-transparent rounded-full animate-spin"
+                       style={{ borderColor: 'var(--table-header-bg)', borderTopColor: 'transparent' }} />
                 </div>
               </td>
             </tr>
@@ -60,10 +59,9 @@ export function Table<T extends object>({
             data.map((row, i) => (
               <tr
                 key={i}
-                className={cn(
-                  'hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors',
-                  onRowClick && 'cursor-pointer'
-                )}
+                className={cn('transition-colors', onRowClick && 'cursor-pointer')}
+                onMouseEnter={e => (e.currentTarget.style.background = 'var(--table-row-hover)')}
+                onMouseLeave={e => (e.currentTarget.style.background = '')}
                 onClick={() => onRowClick?.(row)}
               >
                 {columns.map((col) => (

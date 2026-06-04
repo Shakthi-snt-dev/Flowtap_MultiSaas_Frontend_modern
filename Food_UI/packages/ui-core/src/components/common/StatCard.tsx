@@ -12,10 +12,11 @@ interface StatCardProps {
 }
 
 const colors = {
+  // blue/orange use --a-* CSS vars → auto-respond to active accent (food-orange, blue, etc.)
   blue:   'bg-blue-50 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400',
   green:  'bg-green-50 text-green-600 dark:bg-green-900/20 dark:text-green-400',
   purple: 'bg-purple-50 text-purple-600 dark:bg-purple-900/20 dark:text-purple-400',
-  orange: 'bg-orange-50 text-orange-600 dark:bg-orange-900/20 dark:text-orange-400',
+  orange: 'bg-primary-50 text-blue-600 dark:bg-primary-900/20 dark:text-blue-400',   // food-orange via --a-* vars
   red:    'bg-red-50 text-red-600 dark:bg-red-900/20 dark:text-red-400',
 }
 
@@ -27,7 +28,7 @@ export const StatCard: React.FC<StatCardProps> = ({
   changeLabel,
   color = 'blue',
 }) => (
-  <div className="bg-white dark:bg-gray-800 rounded-xl p-5 border border-gray-100 dark:border-gray-700 shadow-card">
+  <div className="bg-white dark:bg-gray-800 rounded-xl p-5 shadow-card" style={{ border: '1px solid var(--card-border)' }}>
     <div className="flex items-start justify-between mb-3">
       <div className={cn('p-2.5 rounded-xl', colors[color])}>{icon}</div>
       {change !== undefined && (

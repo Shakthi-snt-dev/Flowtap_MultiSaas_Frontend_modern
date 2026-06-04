@@ -1,9 +1,7 @@
 ﻿FROM node:20-alpine AS builder
 WORKDIR /app
 
-RUN npm install -g pnpm
-
-COPY pnpm-workspace.yaml package.json pnpm-lock.yaml* ./
+COPY package.json package-lock.json* ./
 COPY packages/ui-core/package.json ./packages/ui-core/
 COPY packages/store/package.json ./packages/store/
 COPY packages/api-core/package.json ./packages/api-core/
@@ -11,7 +9,7 @@ COPY packages/shared/package.json ./packages/shared/
 COPY packages/pages-core/package.json ./packages/pages-core/
 COPY apps/food/package.json ./apps/food/
 
-RUN pnpm install --frozen-lockfile
+RUN npm install
 
 COPY packages/ ./packages/
 COPY apps/food/ ./apps/food/
@@ -22,7 +20,7 @@ ARG VITE_SIGNALR_URL
 ARG VITE_APP_TITLE
 ARG VITE_INDUSTRY
 
-RUN pnpm --filter @flowtap/app-food build
+RUN cd apps/food && npx vite build
 
 FROM nginx:alpine
 COPY --from=builder /app/apps/food/dist /usr/share/nginx/html

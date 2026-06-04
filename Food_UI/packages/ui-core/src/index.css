@@ -72,6 +72,21 @@
   --a-900:  15  23  42; --a-950:   2   6  23;
 }
 
+/* ── Food Orange — #FF8A24 primary brand palette ─────────────────────────── */
+[data-accent="food-orange"] {
+  --a-50:  255 244 232;  /* #FFF4E8 — light orange bg   */
+  --a-100: 255 232 203;  /* #FFE8CB                     */
+  --a-200: 255 209 154;  /* #FFD19A                     */
+  --a-300: 255 181 105;  /* #FFB569                     */
+  --a-400: 255 158  69;  /* #FF9E45                     */
+  --a-500: 255 138  36;  /* #FF8A24 — primary           */
+  --a-600: 232 116   0;  /* #E87400 — hover             */
+  --a-700: 196  95   0;  /* #C45F00                     */
+  --a-800: 160  76   0;  /* #A04C00                     */
+  --a-900: 122  58   0;  /* #7A3A00                     */
+  --a-950:  77  35   0;  /* #4D2300                     */
+}
+
 /* Border radius scale */
 [data-radius="sharp"]   { --tw-radius-scale: 0.25; }
 [data-radius="normal"]  { --tw-radius-scale: 1; }
@@ -100,6 +115,22 @@ body { font-family: var(--app-font, 'Inter', sans-serif); }
   --sidebar-border:       #e5e7eb;
   --sidebar-logo-bg:      rgb(var(--a-600));
   --page-bg:              #f9fafb;
+
+  /* Header (TopNav) */
+  --header-bg:            #ffffff;
+  --header-border:        #e5e7eb;
+  --header-text:          #111827;
+  --header-hover-bg:      #f3f4f6;
+  --header-icon:          #6b7280;
+
+  /* Table */
+  --table-header-bg:      #f9fafb;
+  --table-header-text:    #4b5563;
+  --table-border:         #e5e7eb;
+  --table-row-hover:      #f9fafb;
+
+  /* Cards */
+  --card-border:          #e5e7eb;
 }
 
 /* ── Default Dark (only applies when no color theme is set) ──────────────── */
@@ -645,6 +676,52 @@ body { font-family: var(--app-font, 'Inter', sans-serif); }
   --sidebar-border:       rgba(255, 255, 255, 0.07);
   --sidebar-logo-bg:      #27272a;
   --page-bg:              #09090b;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   FOOD INDUSTRY THEME
+   White sidebar with orange active states + warm grid page background.
+   Pair with data-accent="food-orange" for full Food brand experience.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+[data-color-theme="food-light"] {
+  --sidebar-bg:           #FFFFFF;
+  --sidebar-title:        #2D3748;
+  --sidebar-subtitle:     #718096;
+  --sidebar-text:         #4A5568;
+  --sidebar-text-muted:   #718096;
+  --sidebar-active-bg:    #FF8A24;
+  --sidebar-active-text:  #FFFFFF;
+  --sidebar-hover-bg:     #FFF4E8;
+  --sidebar-border:       #FFD8B0;
+  --sidebar-logo-bg:      #FF8A24;
+  --page-bg:              #FFF4E8;
+
+  /* Header — white bar (orange accents on icons/interactions) */
+  --header-bg:            #FFFFFF;
+  --header-border:        #FFD8B0;
+  --header-text:          #2D3748;
+  --header-hover-bg:      #FFF4E8;
+  --header-icon:          #718096;
+
+  /* Table — orange header */
+  --table-header-bg:      #FF8A24;
+  --table-header-text:    #FFFFFF;
+  --table-border:         #FFD8B0;
+  --table-row-hover:      #FFF8F1;
+
+  /* Cards — warm orange border */
+  --card-border:          #FFD8B0;
+}
+
+/* Grid pattern on page background for food-light theme */
+[data-color-theme="food-light"] body,
+[data-color-theme="food-light"] #root {
+  background-color: #FFF4E8;
+  background-image:
+    linear-gradient(#F8EBDD 1px, transparent 1px),
+    linear-gradient(90deg, #F8EBDD 1px, transparent 1px);
+  background-size: 24px 24px;
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════

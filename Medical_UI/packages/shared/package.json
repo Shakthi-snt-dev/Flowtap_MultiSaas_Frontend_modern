@@ -7,7 +7,7 @@
     ".": "./src/index.ts"
   },
   "dependencies": {
-    "@flowtap/store": "workspace:*",
+    "@flowtap/store": "*",
     "@microsoft/signalr": "^10.0.0",
     "clsx": "^2.1.0",
     "date-fns": "^3.3.1",
